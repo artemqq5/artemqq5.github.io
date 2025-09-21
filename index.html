@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="uk">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Передбачення</title>
+  <style>
+    :root {
+      /* Палітра: світло/ніжно + шоколадні відтінки */
+      --bg: #ffffff;
+      --cream: #fff7ef;
+      --latte: #f7e7d8;
+      --cocoa: #7b4b3a;
+      --cocoa-mid: #a06b55;
+      --cocoa-light: #c79275;
+      --text: #3b2a23;
+      --muted: #7c6d66;
+      --chip: #ffffffcc;
+      --chip-brd: #00000014;
+      --btn-text: #fffdfb;
+      --shadow: 0 12px 40px rgba(101, 74, 60, .18);
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      height: 100%
+    }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      font: 16px/1.55 Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+      background:
+        radial-gradient(1200px 800px at 20% 0%, var(--cream), transparent 60%),
+        radial-gradient(900px 900px at 100% 100%, var(--latte), transparent 60%),
+        linear-gradient(180deg, #fff, #fff);
+      overflow: hidden;
+    }
+
+    /* Ніжний кремовий "вихор" */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: -10%;
+      background: conic-gradient(from 0deg at 50% 50%, #fff, var(--cream), #fff, var(--latte), #fff);
+      filter: blur(80px) saturate(120%);
+      opacity: .45;
+      animation: swirl 80s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes swirl {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Шоколадні хвилі */
+    .wave {
+      position: fixed;
+      left: -10vw;
+      right: -10vw;
+      height: 30vmax;
+      border-radius: 50%;
+      background: radial-gradient(120vmax 40vmax at 50% 40%, rgba(160, 107, 85, .10), transparent 60%),
+        radial-gradient(90vmax 30vmax at 60% 80%, rgba(199, 146, 117, .10), transparent 60%);
+      filter: blur(20px);
+      pointer-events: none;
+    }
+
+    .wave.w1 {
+      top: -12vmax;
+      animation: float1 18s ease-in-out infinite;
+    }
+
+    .wave.w2 {
+      bottom: -16vmax;
+      animation: float2 22s ease-in-out infinite;
+    }
+
+    @keyframes float1 {
+
+      0%,
+      100% {
+        transform: translateY(0)
+      }
+
+      50% {
+        transform: translateY(1.2vmax)
+      }
+    }
+
+    @keyframes float2 {
+
+      0%,
+      100% {
+        transform: translateY(0)
+      }
+
+      50% {
+        transform: translateY(-1.4vmax)
+      }
+    }
+
+    .wrap {
+      position: relative;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+    }
+
+    .card {
+      width: min(760px, 92vw);
+      background: #ffffffcc;
+      backdrop-filter: blur(12px) saturate(115%);
+      border: 1px solid var(--chip-brd);
+      border-radius: 22px;
+      padding: 28px clamp(18px, 5vw, 36px);
+      box-shadow: var(--shadow);
+    }
+
+    .heading {
+      display: flex;
+      align-items: center;
+      gap: .9rem;
+    }
+
+    .logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background:
+        radial-gradient(circle at 35% 30%, #fff2e6, transparent 50%),
+        radial-gradient(circle at 65% 70%, #fde5d1, transparent 55%),
+        linear-gradient(135deg, var(--cocoa-mid), var(--cocoa-light));
+      box-shadow: inset 0 0 0 1px #ffffff88, 0 6px 16px rgba(160, 107, 85, .25);
+    }
+
+    h1 {
+      margin: 0;
+      font-weight: 800;
+      letter-spacing: .2px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin-top: .25rem
+    }
+
+    .btn {
+      position: relative;
+      margin-top: 18px;
+      display: inline-flex;
+      align-items: center;
+      gap: .65rem;
+      padding: 14px 20px;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      color: var(--btn-text);
+      font-weight: 700;
+      letter-spacing: .2px;
+      background: linear-gradient(135deg, var(--cocoa-mid), var(--cocoa));
+      box-shadow: 0 10px 28px rgba(123, 75, 58, .28), inset 0 -2px 0 rgba(0, 0, 0, .08);
+      transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+      overflow: hidden;
+    }
+
+    .btn:hover {
+      box-shadow: 0 16px 40px rgba(123, 75, 58, .35);
+      filter: saturate(108%);
+    }
+
+    .btn:active {
+      transform: translateY(1px) scale(.99);
+    }
+
+    .btn .ripple {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      pointer-events: none;
+      mix-blend-mode: soft-light;
+      background: radial-gradient(160px 160px at var(--x, 50%) var(--y, 50%), rgba(255, 255, 255, .65), transparent 40%);
+      transition: opacity .25s ease;
+    }
+
+    .btn:hover .ripple {
+      opacity: 1;
+    }
+
+    .fortune {
+      margin-top: 18px;
+      min-height: 3lh;
+      font-size: clamp(20px, 3.4vw, 28px);
+      white-space: pre-wrap;
+    }
+
+    .fortune.revealed {
+      animation: pop .6s ease;
+    }
+
+    @keyframes pop {
+      0% {
+        transform: scale(.985);
+        opacity: .2
+      }
+
+      60% {
+        transform: scale(1.03);
+        opacity: 1
+      }
+
+      100% {
+        transform: scale(1)
+      }
+    }
+
+    .info {
+      margin-top: 10px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--chip);
+      border: 1px solid var(--chip-brd);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #53b164;
+      box-shadow: 0 0 10px #53b16477;
+    }
+
+    .dot.wait {
+      background: #d26b6b;
+      box-shadow: 0 0 10px #d26b6b77;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%) translateY(20px);
+      background: #fff;
+      color: var(--text);
+      border: 1px solid var(--chip-brd);
+      padding: 10px 14px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .08);
+      opacity: 0;
+      pointer-events: none;
+      transition: .25s ease;
+      max-width: 92vw;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Canvas для "какао-конфеті" */
+    canvas#fx {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wave w1" aria-hidden="true"></div>
+  <div class="wave w2" aria-hidden="true"></div>
+  <canvas id="fx"></canvas>
+
+  <div class="wrap">
+    <div class="card" role="main" aria-live="polite">
+      <div class="heading">
+        <div>
+          <h1>Для Наталії</h1>
+          <div class="subtitle">Артем постарався, щоб ти завжди мала доступ до передбачень, коли є інтернет) і для цього
+            не треба курувати щось в сільпо)</div>
+        </div>
+      </div>
+
+      <button class="btn" id="btn">Отримати передбачення <span class="ripple"></span></button>
+      <div class="fortune" id="fortune" aria-label="Текст передбачення"></div>
+
+      <div class="info">
+        <div class="chip"><span class="dot" id="statusDot"></span><span id="statusText">Можеш клікать</span></div>
+        <div class="chip">Наступне: <span id="nextTime" style="margin-left:.35rem">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    (() => {
+      const BTN = document.getElementById('btn');
+      const FORTUNE = document.getElementById('fortune');
+      const TOAST = document.getElementById('toast');
+      const DOT = document.getElementById('statusDot');
+      const STATUS = document.getElementById('statusText');
+      const NEXT = document.getElementById('nextTime');
+      const FX = document.getElementById('fx');
+      const ctx = FX.getContext('2d');
+
+      // Ніжні персональні передбачення (натяки, Одеса, кава, Єва, Іра, той самий хлопець)
+      const PREDICTIONS = [
+        "Передбачення: ранок з лате відкриє сміливе «привіт» у чат, де відповідь приходить швидко.",
+        "Зірки радять: фото білого образу + короткий підпис — і серце на тому кінці розтане.",
+        "Оракул дня: рядок коду підкаже рядок повідомлення. Краще коротко й тепло.",
+        "Знак моря: карта прокладе маршрут не лише вулицями, а й між двома екранами.",
+        "Передбачення: солодке сьогодні вдвох смакує навіть дистанційно — варто сказати про це.",
+        "Карти кажуть: коли хтось говорить «теж», відповідай «тоже» — синхронність працює як магія.",
+        "Небо шепоче: чесне «як ти насправді?» полегшить дихання обом.",
+        "Провісник: трек у навушниках натисне «play» на розмові без зайвих прелюдій.",
+        "Передбачення: місто біля моря любить конкретику — назви час для прогулянки вголос.",
+        "Знак дня: невеликий мем від Іри — і ти знаєш, кому його переслати першим.",
+        "Оракул: комплімент голосу, що заспокоює, потрапить точно в ціль.",
+        "Передбачення: темний шоколад і світле світло — ідеальний фон для «мені добре з тобою».",
+        "Зірки радять: поділись маленькою перемогою дня — почуєш відповідь більшого масштабу.",
+        "Провидіння: той, хто писав цей сайт, дочекається твого «вдалося гарно». Це важливо.",
+        "Передбачення: у Полтаві збирають кроки, які ведуть до моря. Додай сміливості повідомленням.",
+        "Знак хвилі: лаконічне «кава ввечері?» зручно сідає між справами і планами.",
+        "Карти дня: «подобається, як ти думаєш» — найкращий антистрес для нього.",
+        "Передбачення: збережи кадр з сонячною Одесою і перешли туди, де тебе розуміють із півслова.",
+        "Оракул: кухонний експеримент вийде ідеально, якщо додати щіпку «раду тебе чути».",
+        "Передбачення: коли він обговорює проблему — дай простір і одне «я поруч».",
+        "Зірки шепочуть: геопозиція з набережної — натяк, який не потребує пояснень.",
+        "Провісник: білий колір сьогодні пасує твоєму настрою і його спокою.",
+        "Передбачення: коротке аудіо «добрий ранок» зніме напругу краще за довгу тираду.",
+        "Небо радить: скажи «давай без драм, просто разом» — і вечір стане легшим.",
+        "Карти: підпис «смішно?» до фото — і ви вже смієтесь удвох.",
+        "Передбачення: «я вірю в тебе» — потрібна фраза саме сьогодні.",
+        "Оракул: план на вихідні починається з двох слів: «кава» і «разом».",
+        "Передбачення: коли ти слухаєш — тривога стихає; нагадай про це дією.",
+        "Знак сонця: висвітли найтепліший момент дня — і надішли тому, хто для тебе «тихий берег».",
+        "Провидіння: з Полтави до Одеси ближче, коли є «пишу перша».",
+        "Передбачення: фраза «мені спокійно з тобою» стає якорем для вас обох.",
+        "Зірки радять: запитай його думку — в нього добре виходить бачити головне.",
+        "Оракул: ваші «теж/тоже» сьогодні з’єднаються в одне «давай».",
+        "Передбачення: вибір рафу — вибір сміливості написати прямо зараз.",
+        "Знак хвилі: відвертість у двох реченнях стирає кілометри краще за квитки.",
+        "Карти дня: маленький план «кава—повітря—сміх» працює безвідмовно.",
+        "Передбачення: похвали старання — той, хто переживає, почує це серцем.",
+        "Небесний знак: переслати фото із білого інтер’єру — і ти вже ділишся спокоєм.",
+        "Провісник: «поділишся, що радує?» — питання, що відкриває двері.",
+        "Передбачення: відповідь прийде швидше, якщо слова будуть простими.",
+        "Оракул: поєднай рецепт і розмову — виходить найтепліше меню.",
+        "Передбачення: лайк — це крок, але короткий голос — крок назустріч.",
+        "Знак дня: торкнись теми коду — і ви несподівано торкнетесь теми почуттів.",
+        "Карти кажуть: «мені подобається твій підхід» — фраза дня.",
+        "Передбачення: один сміливий меседж скоротить дистанцію краще за десяток натяків.",
+        "Небо радить: надішли кадр з морем і підпис «бракує тебе тут».",
+        "Провидіння: сьогодні твоя ніжність — найточніша мова підтримки.",
+        "Передбачення: якщо шумно в голові — запропонуй тишу з кавою.",
+        "Оракул: «ми на одній хвилі» — чесно і достатньо.",
+        "Передбачення: у «Єві» похвалять сервіс — і ти згадаєш, кого хочеш похвалити сама.",
+        "Знак хвилі: запитай «який смак кави сьогодні?» — і розмова потече сама.",
+        "Карти дня: поділись маленькою мрією — отримаєш спільний план.",
+        "Передбачення: коли він каже «переживаю», відповідай «разом легше».",
+        "Небо каже: додай емодзі там, де слова сором’язливі.",
+        "Провісник: «я люблю обговорювати все з тобою» — звучить як обійми.",
+        "Передбачення: світле селфі в білому — і правильний адресат зробить день світлішим.",
+        "Оракул: набережна просить геолокацію «для своїх».",
+        "Передбачення: не чекай ідеального моменту — створюй його коротким «коли зручно?».",
+        "Знак сонця: шоколадний настрій — чудовий привід написати першим.",
+        "Карти: запропонуй простий ритуал — «кава щодня в один час»; зв’язок міцнішає.",
+        "Передбачення: слово «разом» сьогодні звучить особливо переконливо.",
+        "Небесний натяк: пісня в дірект — і ви смієтесь на одному такті.",
+        "Провидіння: він любить ясність — дай її ніжно й прямо.",
+        "Передбачення: «мені подобається, як ти чуєш» підніме настрій сильніше за фільтр.",
+        "Оракул: коли згадуєш море — згадай і того, з ким хочеш його слухати.",
+        "Передбачення: дистанція скорочується на довжину одного «так».",
+        "Знак хвилі: додай тепла в коротке «ти важливий для мене».",
+        "Карти дня: план «разом вимкнути тривогу на годину» — працює.",
+        "Передбачення: твоя простота — його спокій. Використай це сьогодні.",
+        "Небо радить: підкресли «мені з тобою легко говорити» — це головне.",
+        "Провісник: запитай про шлях — отримаєш відповідь про серце.",
+        "Передбачення: з Полтави до Одеси веде фраза «я чекаю на тебе тут».",
+        "Оракул: на кухні народжується план — запроси до дегустації життя.",
+        "Передбачення: «дякую, що ділишся» — слова, які знімають половину напруги.",
+        "Знак дня: ваша улюблена «теж/тоже» сьогодні перетворюється на «разом».",
+        "Карти: надішли фото деталі дня — той, хто уважний, прочитає усе між рядків.",
+        "Передбачення: коли соромишся, скажи просте «ти мені дорогий». Досить.",
+        "Небесний знак: світло в кадрі — світло в розмові. Ділись обома.",
+        "Провидіння: запроси на «п’ять хвилин голосом» — цього більш ніж досить.",
+        "Передбачення: фраза «мені добре, коли ти поруч навіть тут» — потрапляє в серце.",
+        "Оракул: якщо сумніваєшся, обери теплоту замість іронії.",
+        "Передбачення: сьогодні ідеальний день для «давай побачимось».",
+        "Знак сонця: коли він говорить про плани, додай «я з тобою» — і все складається.",
+        "Карти дня: чесність у двох реченнях краща за ідеальний сценарій.",
+        "Передбачення: один сміливий крок у чаті — і море ближче на крок."
+      ];
+
+      const ONE_HOUR = 60 * 1000;
+      const K_TS = 'fortune_ts';
+      const K_TEXT = 'fortune_text';
+      const now = () => Date.now();
+
+      const pad = n => String(n).padStart(2, '0');
+      const fmtHMS = ms => {
+        if (ms < 0) ms = 0;
+        const s = Math.floor(ms / 1000);
+        const h = Math.floor(s / 3600);
+        const m = Math.floor((s % 3600) / 60);
+        const ss = s % 60;
+        return h > 0 ? `${pad(h)}:${pad(m)}:${pad(ss)}` : `${pad(m)}:${pad(ss)}`;
+      };
+
+      function setStatus(ready, leftMs) {
+        DOT.classList.toggle('wait', !ready);
+        STATUS.textContent = ready ? 'Можна клікать' : 'Зачекай до наступного разу';
+        NEXT.textContent = ready ? '—' : `Через ${fmtHMS(leftMs)}`;
+      }
+
+      function leftMs() {
+        const last = Number(localStorage.getItem(K_TS) || 0);
+        const elapsed = now() - last;
+        return ONE_HOUR - elapsed;
+      }
+
+      let tickerId = null;
+      function startTicker() {
+        stopTicker();
+        const tick = () => {
+          const left = leftMs();
+          const ready = left <= 0;
+          setStatus(ready, left);
+          if (ready) stopTicker();
+          else tickerId = requestAnimationFrame(tick);
+        };
+        tickerId = requestAnimationFrame(tick);
+      }
+      function stopTicker() {
+        if (tickerId) cancelAnimationFrame(tickerId), tickerId = null;
+      }
+
+      function lockForHour() {
+        localStorage.setItem(K_TS, String(now()));
+        startTicker();
+      }
+
+      function restore() {
+        const lastText = localStorage.getItem(K_TEXT);
+        const left = leftMs();
+        const ready = left <= 0;
+        if (!ready && lastText) {
+          FORTUNE.textContent = lastText;
+          startTicker();
+        } else {
+          setStatus(true, 0);
+        }
+      }
+
+      function showToast(msg) {
+        TOAST.textContent = msg;
+        TOAST.classList.add('show');
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(() => TOAST.classList.remove('show'), 2500);
+      }
+
+      // Тайпрайтер
+      async function typeText(el, text) {
+        el.classList.remove('revealed');
+        el.textContent = '';
+        const base = 10, jitter = 35;
+        for (let i = 0; i < text.length; i++) {
+          el.textContent += text[i];
+          await new Promise(r => setTimeout(r, base + Math.random() * jitter));
+        }
+        el.classList.add('revealed');
+      }
+
+      // Какао-конфеті
+      function cocoaConfetti() {
+        const W = FX.width = innerWidth, H = FX.height = innerHeight;
+        const N = 120, colors = ['#7b4b3a', '#a06b55', '#c79275', '#e9c2aa'];
+        const parts = Array.from({ length: N }, () => ({
+          x: Math.random() * W, y: -20 - Math.random() * H * .2,
+          vx: (Math.random() - .5) * 1.5, vy: 1.8 + Math.random() * 2.8,
+          w: 6 + Math.random() * 10, h: 2 + Math.random() * 6,
+          rot: Math.random() * Math.PI * 2, vrot: (Math.random() - .5) * 0.15,
+          color: colors[(Math.random() * colors.length) | 0],
+          round: Math.random() < .5
+        }));
+        let t = 0;
+        (function tick() {
+          ctx.clearRect(0, 0, W, H);
+          for (const p of parts) {
+            p.x += p.vx; p.y += p.vy; p.rot += p.vrot;
+            ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+            ctx.fillStyle = p.color;
+            p.round ? (ctx.beginPath(), ctx.ellipse(0, 0, p.w / 2, p.h / 2, 0, 0, Math.PI * 2), ctx.fill())
+              : ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+            ctx.restore();
+          }
+          if (++t < 180) requestAnimationFrame(tick); else ctx.clearRect(0, 0, W, H);
+        })();
+      }
+
+      // Ріпл на кнопці
+      BTN.addEventListener('pointermove', (e) => {
+        const r = BTN.getBoundingClientRect();
+        BTN.style.setProperty('--x', (e.clientX - r.left) + 'px');
+        BTN.style.setProperty('--y', (e.clientY - r.top) + 'px');
+      });
+
+      function saveFortuneText(text) {
+        localStorage.setItem(K_TEXT, text);
+      }
+
+      BTN.addEventListener('click', async () => {
+        const left = leftMs();
+        if (left > 0) {
+          showToast(`Ще трохи терпіння — через ${fmtHMS(left)}`);
+          startTicker(); // на випадок, якщо не запущений
+          return;
+        }
+        const text = PREDICTIONS[(Math.random() * PREDICTIONS.length) | 0];
+        await typeText(FORTUNE, text);
+        cocoaConfetti();
+        saveFortuneText(text);
+        lockForHour();
+      });
+
+      addEventListener('resize', () => { FX.width = innerWidth; FX.height = innerHeight; });
+      restore();
+    })();
+  </script>
+</body>
+
+</html>

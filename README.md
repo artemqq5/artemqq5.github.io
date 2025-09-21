@@ -1,1 +1,0 @@
-# artemqq5.github.io
